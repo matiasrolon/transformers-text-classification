@@ -20,7 +20,7 @@ class Preprocessor:
         if isinstance(data, pd.DataFrame):          # Si es un dataframe.
             data.to_csv(path_write)                 # Grabo archivo en path.
 
-    def proproccess(self, path_data,  path_emotions="./emotions.txt", tag="undefined"):
+    def proproccess(self, path_data,  path_emotions="./emotions.txt", tag=None):
         print("Preprocesamiento de dataset en ", path_data)
 
         # Carga data
@@ -30,7 +30,8 @@ class Preprocessor:
             names=["comment", "emotions", "code"]
         )
         data = data.drop(columns="code")
-        data["tag"] = tag
+        if tag is not None:
+            data["tag"] = tag
 
         # Carga emociones
         emotions = []
