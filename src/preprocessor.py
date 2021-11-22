@@ -20,7 +20,7 @@ class Preprocessor:
         if isinstance(data, pd.DataFrame):          # Si es un dataframe.
             data.to_csv(path_write)                 # Grabo archivo en path.
 
-    def proproccess(self, path_data,  path_emotions="./emotions.txt", tag=None):
+    def preproccess(self, path_data,  path_emotions="./emotions.txt", tag=None):
         print("Preprocesamiento de dataset en ", path_data)
 
         # Carga data

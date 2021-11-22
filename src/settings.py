@@ -4,12 +4,14 @@ PATH_TEST = PATH_FOLDER_DATA+ "/test.tsv"
 PATH_TRAIN = PATH_FOLDER_DATA + "/train.tsv"
 PATH_EMOTIONS = PATH_FOLDER_DATA + "/emotions.txt"
 PATH_PREPROCESSING_DATA = './results/preprocessEmotions.csv'
+PATH_TRAINED_MODEL = './results/trainedModel.ckpt'
 
 # BERT
 BERT_MODEL_NAME = 'bert-base-cased'
-MAX_TOKEN_COUNT = 1024
+MAX_TOKEN_COUNT = 512
 N_EPOCHS = 10
-BATCH_SIZE = 12
+BATCH_SIZE = 1
+THRESHOLD = 0.2
 
 # OTHERS
 PREPROCESS_DATA = False
