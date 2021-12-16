@@ -16,7 +16,7 @@ class Preprocessor:
     def __init__(self, path_folder="./"):
         self.path_folder = path_folder              # Carpeta base donde se encuentran los datos, graban archivos nuevos, etc.
 
-    def write(self, data, path_write='./'):
+    def write(self, data, path_write='./preprocessing.csv'):
         if isinstance(data, pd.DataFrame):          # Si es un dataframe.
             data.to_csv(path_write)                 # Grabo archivo en path.
 

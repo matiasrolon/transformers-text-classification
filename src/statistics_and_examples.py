@@ -47,3 +47,14 @@ plt.show()
 # data['emotions'] = data[data.columns[2:]].values.tolist()
 # data = data[['comment', 'emotions']]
 # print(data.head())
+
+"""# dataset de validacion
+pp = Preprocessor(settings.PATH_FOLDER_DATA)
+data_validation = pp.preproccess(settings.PATH_VALIDATION, settings.PATH_EMOTIONS, "validation")
+X_validation = data_validation.comment
+for category in settings.LABEL_COLUMNS:
+    print('... Processing {}'.format(category))
+    LogReg_pipeline.fit(x_train, data_train[category])
+    prediction = LogReg_pipeline.predict(X_validation)
+    print('Test accuracy is {}'.format(accuracy_score(data_validation[category], prediction)))
+"""
