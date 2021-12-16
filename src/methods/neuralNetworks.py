@@ -13,12 +13,12 @@ from sklearn.metrics import accuracy_score, roc_curve, auc, roc_auc_score, hammi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 
 from nltk.corpus import stopwords
 
 
-class MultilabelLogisticRegression:
+class MultilabelKNearestNeighbours:
 
     def __init__(self, settings):
         self.settings = settings
@@ -36,12 +36,12 @@ class MultilabelLogisticRegression:
 
         for category in self.settings.LABEL_COLUMNS:
             print('Training category {}...'.format(category))
-            LogReg_pipeline = Pipeline([
+            MLkNN_pipeline = Pipeline([
                 ('tfidf', TfidfVectorizer(stop_words=stop_words)),
-                ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
+                ('clf', OneVsRestClassifier(KNeighborsClassifier(n_neighbors=5, weights='uniform'), n_jobs=1)),
             ])
-            LogReg_pipeline.fit(x_train, y_train[category])
-            self.models[category] = LogReg_pipeline
+            MLkNN_pipeline.fit(x_train, y_train[category])
+            self.models[category] = MLkNN_pipeline
 
     def predict(self, x_test, y_test):
         self.y_test = y_test
@@ -76,32 +76,3 @@ class MultilabelLogisticRegression:
 
     def coverage_error_total(self, y_test, y_pred):
         return coverage_error(y_test, y_pred)
-
-    def graph_roc_curves(self, metrics):
-        # graficar
-        plt.figure()
-        lw = 2
-
-        colors = ["darkorange", "aqua", "azure", "green", "indigo", "lavender", "lime", "magenta", "olive", "orange", "pink", "purple",
-                  "red", "salmon", "silver", "teal", "yellow", "coral", "ivory", "gold", "orchid", "tan", "fuchsia", "darkgreen",
-                  "brown", "navy", "black", "cyan"]
-        index = 0
-        for emotion in metrics:
-            if metrics[emotion]["roc"]["roc_auc"]>=0.5:
-                plt.plot(
-                    metrics[emotion]["roc"]["fpr"],
-                    metrics[emotion]["roc"]["tpr"],
-                    color=colors[index],
-                    lw=lw,
-                    label=emotion + " (area ="+ str(metrics[emotion]["roc"]["roc_auc"]) +")"
-                )
-            index+=1
-
-        plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel("False Positive Rate")
-        plt.ylabel("True Positive Rate")
-        plt.title("Receiver operating characteristic example")
-        plt.legend(loc="lower right")
-        plt.show()

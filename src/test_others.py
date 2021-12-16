@@ -11,6 +11,7 @@ import os.path
 import pandas as pd
 
 from methods.logisticRegression import MultilabelLogisticRegression
+from methods.KNearestNeighbours import MultilabelKNearestNeighbours
 import settings
 import re
 import matplotlib
@@ -62,6 +63,7 @@ if __name__ == "__main__":
     data_train = None
     data_test = None
     stop_words = set(stopwords.words('english'))
+    metrics = []
 
     print("load dataset ----------------")
     if settings.PREPROCESS_DATA:                                        # Verifica si se debe preprocesar el dataset segun config.
@@ -83,63 +85,42 @@ if __name__ == "__main__":
     x_test = data_test.comment
     y_test = data_test.drop(labels=['tag','comment','emotions'], axis=1)
 
-    # REGRESION LOGISTICA ------------------------------------------------------------------------------------------------------
-    print("TEST REGRESION LOGISTICA *****************************************************************")
-    logReg = MultilabelLogisticRegression(settings)
-    logReg.train(x_train, y_train)
-    predictions, metrics = logReg.predict(x_test, y_test)
-    print("GENERAL METRICS ", metrics)
-    transpose_predictions = predictions.T
-    np_y_test = np.array(y_test)
-
-    print("- accuracy: ", logReg.accuracy_total(np_y_test, transpose_predictions))
-    print("- coverage_error: ", logReg.coverage_error_total(np_y_test, transpose_predictions))
-
-    logReg.graph_roc_curves(metrics)
-
-    #ALGORITMO MLkNN -----------------------------------------------------------------------------------------------------
+    # print("******************************************************************************************")
+    # print("REGRESION LOGISTICA **********************************************************************")
+    # print("******************************************************************************************")
+    # logReg = MultilabelLogisticRegression(settings)
+    # logReg.train(x_train, y_train)
+    # predictions, reg_metrics = logReg.predict(x_test, y_test)
+    # metrics.append(reg_metrics)
+    # print("METRICS ", reg_metrics)
+    # transpose_predictions = predictions.T
+    # np_y_test = np.array(y_test)
+    #
+    # print("- accuracy: ", logReg.accuracy_total(np_y_test, transpose_predictions))
+    # print("- coverage_error: ", logReg.coverage_error_total(np_y_test, transpose_predictions))
+    #
+    # logReg.graph_roc_curves(reg_metrics)
+    #
+    # print("******************************************************************************************")
+    # print("K NEAREST NEIGHBOURS *********************************************************************")
+    # print("******************************************************************************************")
+    # KNeighbours = MultilabelKNearestNeighbours(settings)
+    # KNeighbours.train(x_train, y_train)
+    # predictions, knn_metrics = KNeighbours.predict(x_test, y_test)
+    # metrics.append(knn_metrics)
+    # print("GENERAL METRICS ", knn_metrics)
+    # transpose_predictions = predictions.T
+    # np_y_test = np.array(y_test)
+    #
+    # print("- accuracy: ", KNeighbours.accuracy_total(np_y_test, transpose_predictions))
+    # print("- coverage_error: ", KNeighbours.coverage_error_total(np_y_test, transpose_predictions))
+    #
+    # KNeighbours.graph_roc_curves(knn_metrics)
+    #
     print("******************************************************************************************")
-    print("TEST MLkNN ********************************************************************")
-    """
-    MLkNN_pipeline = Pipeline([
-        ('tfidf', TfidfVectorizer(stop_words=stop_words)),
-        ('clf', OneVsRestClassifier(KNeighborsClassifier(n_neighbors=5, weights='uniform'), n_jobs=1)),
-    ])
-
-    # Por label
-    prediction_matrix = []
-    for category in settings.LABEL_COLUMNS:
-        #print('... Processing {}'.format(category))
-        # train the model using X_dtm & y
-        MLkNN_pipeline.fit(x_train, y_train[category])
-        # compute the testing accuracy
-        prediction = MLkNN_pipeline.predict(x_test)
-        prediction_matrix.append(prediction)
-        #print('Test accuracy is {}'.format(accuracy_score(data_test[category], prediction)))
-
-    prediction_matrix = np.array(prediction_matrix)
-    transpose_prediction_matrix = prediction_matrix.T
-
-    countEq = 0
-    indexMatrix = 0
-    for index, row in y_test.iterrows():
-        if indexMatrix<10:
-            print(np.array(row.values))
-            print(transpose_prediction_matrix[indexMatrix])
-
-        if np.array_equal(transpose_prediction_matrix[indexMatrix], np.array(row.values)):
-            countEq+=1
-        indexMatrix+=1
-
-    accuracy_total = countEq/y_test.shape[0]
-    print("Accuracy total", accuracy_total)
-    """
-
-
-    #ALGORITMO NEURAL NETWORKS -----------------------------------------------------------------------------------------------------
+    print("NEURAL NETWORKS - ************************************************************************")
     print("******************************************************************************************")
-    print("TEST neural network ********************************************************************")
-    """
+
     # Configuration options
     n_samples = data.shape[0]
     n_features = 28
@@ -164,8 +145,6 @@ if __name__ == "__main__":
     maxlen = 200
     X_train = pad_sequences(X_train, padding='post', maxlen=maxlen)
     X_test = pad_sequences(X_test, padding='post', maxlen=maxlen)
-    #print(X_train)
-    #print(y_train)
 
     # Create the model
     model = Sequential()
@@ -197,6 +176,5 @@ if __name__ == "__main__":
     score = model.evaluate(X_test, y_test, verbose=0)
     print("model metrics", model.metrics_names)
 
-    print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
-    print(score[2])
-    """
+    print(f'Test loss: {score[0]} / Test accuracy: {score[1]} / test Auc: {score[2]}')
+

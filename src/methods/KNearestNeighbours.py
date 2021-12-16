@@ -13,12 +13,12 @@ from sklearn.metrics import accuracy_score, roc_curve, auc, roc_auc_score, hammi
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 
 from nltk.corpus import stopwords
 
 
-class MultilabelLogisticRegression:
+class MultilabelKNearestNeighbours:
 
     def __init__(self, settings):
         self.settings = settings
@@ -36,12 +36,12 @@ class MultilabelLogisticRegression:
 
         for category in self.settings.LABEL_COLUMNS:
             print('Training category {}...'.format(category))
-            LogReg_pipeline = Pipeline([
+            MLkNN_pipeline = Pipeline([
                 ('tfidf', TfidfVectorizer(stop_words=stop_words)),
-                ('clf', OneVsRestClassifier(LogisticRegression(solver='sag'), n_jobs=1)),
+                ('clf', OneVsRestClassifier(KNeighborsClassifier(n_neighbors=5, weights='uniform'), n_jobs=1)),
             ])
-            LogReg_pipeline.fit(x_train, y_train[category])
-            self.models[category] = LogReg_pipeline
+            MLkNN_pipeline.fit(x_train, y_train[category])
+            self.models[category] = MLkNN_pipeline
 
     def predict(self, x_test, y_test):
         self.y_test = y_test
